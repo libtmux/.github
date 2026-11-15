@@ -1,0 +1,101 @@
+name: actions
+
+# The composite actions in actions/ carry typed Python helpers. This workflow
+# holds them to ruff, ty, pytest and their doctests, then builds tmux with the
+# build-tmux action on a hosted runner, which no unit test can stand in for.
+on:
+  push:
+    branches: [main]
+    paths: [actions/**, pyproject.toml, .github/workflows/actions.yml]
+  pull_request:
+    paths: [actions/**, pyproject.toml, .github/workflows/actions.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A superseded pull request run is not worth finishing. A push to main keeps
+# its own group, so consecutive pushes never cancel one another.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      # The native tests start a real tmux. Installing it with the repository's
+      # own action also exercises that action on every change.
+      - name: Install tmux
+        uses: ./actions/apt-get
+        with:
+          update: "true"
+          args: install --yes tmux
+
+      # pip 25.1 installs a dependency group; the runner's pip is older.
+      - name: Install the checks
+        run: |
+          python3 -m venv "$RUNNER_TEMP/checks"
+          "$RUNNER_TEMP/checks/bin/python" -m pip install --quiet --upgrade pip
+          "$RUNNER_TEMP/checks/bin/python" -m pip install --quiet --group dev
+          echo "$RUNNER_TEMP/checks/bin" >> "$GITHUB_PATH"
+
+      - run: ruff format --check
+      - run: ruff check
+      - run: ty check
+      - name: Run the tests and doctests
+        run: pytest
+
+  integration:
+    name: Build tmux ${{ matrix.tmux }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # The oldest and the newest tmux the ports commonly test.
+        tmux: ["3.3a", "3.8"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Build tmux ${{ matrix.tmux }}
+        id: tmux
+        uses: ./actions/build-tmux
+        with:
+          ref: ${{ matrix.tmux }}
+
+      - name: Check what the action reports
+        env:
+          BINARY: ${{ steps.tmux.outputs.binary }}
+          PREFIX: ${{ steps.tmux.outputs.prefix }}
+          VERSION: ${{ steps.tmux.outputs.version }}
+          SOURCE: ${{ steps.tmux.outputs.source }}
+          EXPECTED: ${{ matrix.tmux }}
+        run: |
+          test "$("$BINARY" -V)" = "tmux $EXPECTED"
+          test "$VERSION" = "$EXPECTED"
+          test "$BINARY" = "$PREFIX/bin/tmux"
+          pinned=$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))[sys.argv[2]])' \
+            actions/build-tmux/tmux-releases.json "$EXPECTED")
+          test "$SOURCE" = "$pinned"
+
+      - name: Install the checks
+        run: |
+          python3 -m venv "$RUNNER_TEMP/checks"
+          "$RUNNER_TEMP/checks/bin/python" -m pip install --quiet --upgrade pip
+          "$RUNNER_TEMP/checks/bin/python" -m pip install --quiet --group dev
+
+      # The cache regression tests run against the tmux this job built, so a
+      # validation that would accept a broken build fails here.
+      - name: Run the native tests against tmux ${{ matrix.tmux }}
+        env:
+          TMUX_BINARY: ${{ steps.tmux.outputs.binary }}
+        run: |
+          "$RUNNER_TEMP/checks/bin/pytest" -m native actions/build-tmux
