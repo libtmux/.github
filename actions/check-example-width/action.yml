@@ -1,0 +1,17 @@
+name: Check example width
+description: Fail when code in documentation examples is wider than 80 columns, or when the repository's example-width config or shared example rules drift.
+
+inputs:
+  root:
+    description: The repository to check, as a path relative to the job's working directory, or absolute. The default is the checkout of the job.
+    default: "."
+
+runs:
+  using: composite
+  steps:
+    - name: Check example width
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        ROOT: ${{ inputs.root }}
+      run: python3 "$ACTION_PATH/check_example_width.py" --root "$ROOT"
