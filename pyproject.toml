@@ -10,7 +10,11 @@ dev = ["pytest==9.2.0", "ruff==0.17.4", "ty==0.0.101"]
 [tool.pytest.ini_options]
 testpaths = ["actions"]
 addopts = "--doctest-modules --import-mode=importlib -p no:cacheprovider"
-pythonpath = ["actions/apt-get", "actions/build-tmux"]
+pythonpath = [
+    "actions/apt-get",
+    "actions/build-tmux",
+    "actions/check-example-width",
+]
 markers = [
     "native: runs a real tmux binary; set TMUX_BINARY to test one other than PATH's",
 ]
@@ -33,6 +37,11 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"actions/check-example-width/check_example_width.py" = [
+    "C901",   # the Markdown, doc comment and config scans are line parsers,
+    "PLR0912", # and each branch is one rule of the example rules they enforce
+    "PLR0915",
+]
 "**/tests/*" = [
     "S101",   # pytest asserts
     "D",      # test names carry the description
@@ -44,4 +53,8 @@ ignore = [
 
 [tool.ty.environment]
 python-version = "3.10"
-extra-paths = ["actions/apt-get", "actions/build-tmux"]
+extra-paths = [
+    "actions/apt-get",
+    "actions/build-tmux",
+    "actions/check-example-width",
+]
