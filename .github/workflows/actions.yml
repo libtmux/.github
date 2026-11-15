@@ -1,8 +1,9 @@
 name: actions
 
 # The composite actions in actions/ carry typed Python helpers. This workflow
-# holds them to ruff, ty, pytest and their doctests, then builds tmux with the
-# build-tmux action on a hosted runner, which no unit test can stand in for.
+# holds them to ruff, ty, pytest and their doctests, then runs the build-tmux
+# and check-example-width actions on a hosted runner, which no unit test can
+# stand in for.
 on:
   push:
     branches: [main]
@@ -99,3 +100,52 @@ jobs:
           TMUX_BINARY: ${{ steps.tmux.outputs.binary }}
         run: |
           "$RUNNER_TEMP/checks/bin/pytest" -m native actions/build-tmux
+
+  example-width:
+    name: Run the check-example-width action
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      # A repository whose one example fits, then the same repository with a
+      # wide line added. The action must pass the first and fail the second: an
+      # action wired to do nothing would pass both.
+      - name: Create a repository to check
+        run: |
+          fixture="$RUNNER_TEMP/fixture"
+          mkdir -p "$fixture/.github"
+          cd "$fixture"
+          git init --quiet
+          printf '%s\n' \
+            'markdown = ["**/*.md"]' \
+            'shared_digest = "missing"' \
+            'allow_ceiling = 0' > .github/example-width.toml
+          printf '%s\n' '```sh' 'ls' '```' > README.md
+          git add --all
+
+      - name: The action passes a repository whose examples fit
+        uses: ./actions/check-example-width
+        with:
+          root: ${{ runner.temp }}/fixture
+
+      - name: Add a wide example
+        run: |
+          cd "$RUNNER_TEMP/fixture"
+          printf '%s\n' '```sh' "echo $(printf 'x%.0s' {1..90})" '```' >> README.md
+          git add --all
+
+      - name: The action fails a repository with a wide example
+        id: wide
+        uses: ./actions/check-example-width
+        continue-on-error: true
+        with:
+          root: ${{ runner.temp }}/fixture
+
+      - name: Require the wide example to have failed the action
+        if: steps.wide.outcome != 'failure'
+        run: |
+          echo "::error::The action ${{ steps.wide.outcome }} on a 90-column example."
+          exit 1
