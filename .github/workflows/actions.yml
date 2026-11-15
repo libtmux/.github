@@ -5,7 +5,7 @@ name: actions
 # build-tmux action on a hosted runner, which no unit test can stand in for.
 on:
   push:
-    branches: [main]
+    branches: [main, actions-20261115]
     paths: [actions/**, pyproject.toml, .github/workflows/actions.yml]
   pull_request:
     paths: [actions/**, pyproject.toml, .github/workflows/actions.yml]
