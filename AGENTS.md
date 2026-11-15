@@ -17,6 +17,32 @@ Organization defaults that GitHub reads, and the policies they link to:
 | [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md) | The pull request template of every repository without its own |
 | [AI_POLICY.md](AI_POLICY.md) | How the libtmux and tmux-python projects treat AI tools, which the template links |
 | [README.md](README.md) | What the repository is for |
+| [actions/](actions/) | Composite actions the ports share, each with its README, tests and typed Python helper |
+| [.github/workflows/actions.yml](.github/workflows/actions.yml) | Runs the checks and an integration build for those actions |
+
+## Changing an action
+
+A port pins an action by commit SHA, so a merged change reaches no port until
+that port moves its pin. Keep an action's inputs and outputs stable, and say
+in the commit when a change breaks a caller.
+
+From the repository root, run the same checks as CI:
+
+```console
+$ uv run --group dev ruff format --check
+```
+
+```console
+$ uv run --group dev ruff check
+```
+
+```console
+$ uv run --group dev ty check
+```
+
+```console
+$ uv run --group dev pytest
+```
 
 ## Which policy applies
 
