@@ -1,0 +1,47 @@
+[project]
+name = "libtmux-actions"
+version = "0"
+description = "Tooling for the composite actions in this repository"
+requires-python = ">=3.10"
+
+[dependency-groups]
+dev = ["pytest==9.2.0", "ruff==0.17.4", "ty==0.0.101"]
+
+[tool.pytest.ini_options]
+testpaths = ["actions"]
+addopts = "--doctest-modules --import-mode=importlib -p no:cacheprovider"
+pythonpath = ["actions/apt-get", "actions/build-tmux"]
+markers = [
+    "native: runs a real tmux binary; set TMUX_BINARY to test one other than PATH's",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D203",   # conflicts with D211
+    "D213",   # conflicts with D212
+    "COM812", # conflicts with the formatter
+    "CPY001", # no copyright notices in these files
+    "INP001", # the helpers are scripts and tests, not packages
+    "S603",   # every subprocess call here takes a list, never a shell string
+    "S607",   # the runner provides git, sudo and apt-get on PATH
+    "T201",   # the helpers report to the job log with print
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*" = [
+    "S101",   # pytest asserts
+    "D",      # test names carry the description
+    "ARG001", # fixtures are requested for their effect
+    "PLR2004",
+    "SLF001", # tests reach into private helpers
+    "ANN401",
+]
+
+[tool.ty.environment]
+python-version = "3.10"
+extra-paths = ["actions/apt-get", "actions/build-tmux"]
