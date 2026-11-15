@@ -1,0 +1,28 @@
+name: apt-get
+description: Run apt-get on a GitHub-hosted runner under a timeout, moving to another mirror when an attempt hangs or fails.
+
+inputs:
+  args:
+    description: The apt-get arguments, split like a shell command line, such as "install --yes libevent-dev".
+    required: true
+  timeout:
+    description: Seconds one attempt may take before it is killed.
+    default: "180"
+  update:
+    description: Set to "true" to run `apt-get update` first, under the same bounds.
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Run apt-get ${{ inputs.args }}
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        APT_ARGS: ${{ inputs.args }}
+        APT_TIMEOUT: ${{ inputs.timeout }}
+        APT_UPDATE: ${{ inputs.update }}
+      run: |
+        flags=(--timeout "$APT_TIMEOUT")
+        if [ "$APT_UPDATE" = true ]; then flags+=(--update); fi
+        python3 "$ACTION_PATH/apt_get.py" "${flags[@]}" --args "$APT_ARGS"
