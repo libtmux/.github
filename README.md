@@ -3,6 +3,13 @@
 GitHub reads the community health files here for every repository in the
 [libtmux](https://github.com/libtmux) organization that does not carry its own.
 
+| File | What it covers |
+| --- | --- |
+| [SECURITY.md](SECURITY.md) | Private vulnerability reporting, supported versions, and security scope |
+| [AI_POLICY.md](AI_POLICY.md) | Using AI tools with these packages and contributing issues or pull requests |
+| [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md) | Default pull request template linking the AI policy |
+| [WRITING.md](WRITING.md) | Shared writing, CommonMark, README shape, comment, and commit conventions |
+
 The repository also hosts composite actions the ports share, so each fix lands
 once. A workflow uses one as `libtmux/.github/actions/<name>@<full-commit-sha>`.
 
