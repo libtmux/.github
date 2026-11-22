@@ -14,8 +14,10 @@ Organization defaults that GitHub reads, and the policies they link to:
 
 | Path | What it is |
 | --- | --- |
+| [SECURITY.md](SECURITY.md) | The security policy and private vulnerability reporting route of every repository without its own |
 | [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md) | The pull request template of every repository without its own |
 | [AI_POLICY.md](AI_POLICY.md) | How the libtmux and tmux-python projects treat AI tools, which the template links |
+| [WRITING.md](WRITING.md) | Shared writing, CommonMark, README shape, comment, and commit conventions |
 | [README.md](README.md) | What the repository is for |
 | [actions/](actions/) | Composite actions the ports share, each with its README, tests and typed Python helper |
 | [.github/workflows/actions.yml](.github/workflows/actions.yml) | Runs the checks and an integration build for those actions |
@@ -46,10 +48,12 @@ $ uv run --group dev pytest
 
 ## Which policy applies
 
-- Documentation, user-facing text, and commit messages:
+- Documentation, user-facing text, comments, and commit messages:
   [WRITING.md](WRITING.md)
 - Use of AI tools, issues, and pull requests from contributors:
   [AI_POLICY.md](AI_POLICY.md)
+- Vulnerability reporting, security scope, and supported versions:
+  [SECURITY.md](SECURITY.md)
 
 Each file is the single home for its subject.
 
