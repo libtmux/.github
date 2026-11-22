@@ -10,7 +10,7 @@
 `libtmux` provides typed client libraries for
 [tmux](https://github.com/tmux/tmux),
 [`tmuxp`](https://github.com/tmux-python/tmuxp)-compatible workspace loaders,
-and Model Context Protocol (MCP) servers across 19+ languages, verified against
+and Model Context Protocol (MCP) servers across languages, verified against
 real tmux servers. Installation guides, examples, and cross-linked API
 references are published together at [libtmux.org](https://libtmux.org/).
 
