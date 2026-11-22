@@ -74,8 +74,8 @@ $ uv run \
 
 ## README shape
 
-Package and port READMEs follow the shared
-[README shape decision](https://github.com/libtmux/central/blob/master/docs/decisions/0005-readme-shape.md):
+Package and port READMEs follow a shared shape (without hardcoded language,
+file, or test counts in prose that drift as the project grows):
 
 - **Header.** Open with the logo block (where used), title, badge row (CI,
   published registry version, [libtmux.org](https://libtmux.org/) docs when
