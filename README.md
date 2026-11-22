@@ -5,6 +5,7 @@ GitHub reads the community health files here for every repository in the
 
 | File | What it covers |
 | --- | --- |
+| [profile/README.md](profile/README.md) | Public profile rendered on [github.com/libtmux](https://github.com/libtmux) |
 | [SECURITY.md](SECURITY.md) | Private vulnerability reporting, supported versions, and security scope |
 | [AI_POLICY.md](AI_POLICY.md) | Using AI tools with these packages and contributing issues or pull requests |
 | [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md) | Default pull request template linking the AI policy |

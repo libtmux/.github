@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source srcset="https://raw.githubusercontent.com/libtmux/assets/main/assets/python/library/logo.svg" type="image/svg+xml">
-    <img src="https://raw.githubusercontent.com/libtmux/assets/main/assets/python/library/logo-512.png" width="96" height="96" alt="libtmux">
+    <source srcset="https://raw.githubusercontent.com/libtmux/.github/main/assets/logo.svg" type="image/svg+xml">
+    <img src="https://raw.githubusercontent.com/libtmux/.github/main/assets/logo.png" width="96" height="96" alt="libtmux">
   </picture>
 </p>
 
@@ -47,8 +47,7 @@ references are published together at [libtmux.org](https://libtmux.org/).
 | Repository | Purpose |
 | --- | --- |
 | [libtmux/docs](https://github.com/libtmux/docs) | Source for [libtmux.org](https://libtmux.org/): guides, examples, prompts, `llms.txt`, and API references |
-| [libtmux/central](https://github.com/libtmux/central) | Cross-library observable contracts and architectural decision records |
-| [libtmux/assets](https://github.com/libtmux/assets) | Language-paletted logos, social cards, and brand components across library, workspace, and MCP variants |
+| [libtmux/.github](https://github.com/libtmux/.github) | Organization community defaults (`SECURITY.md`, `AI_POLICY.md`, `WRITING.md`) and shared GitHub Actions |
 | [tmux-python](https://github.com/tmux-python) | Organization hosting the Python [libtmux](https://github.com/tmux-python/libtmux), [tmuxp](https://github.com/tmux-python/tmuxp), and [libtmux-mcp](https://github.com/tmux-python/libtmux-mcp) packages |
 
 Packages in `libtmux` are experimental unless a repository's `README` states
